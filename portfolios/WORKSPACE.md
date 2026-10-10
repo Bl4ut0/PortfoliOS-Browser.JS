@@ -9,8 +9,6 @@ The parent is the [PortfoliOS-Orchestration documentation repository](https://gi
 | [Bl4ut0/PortfoliOS](https://github.com/Bl4ut0/PortfoliOS) | Boot/login, Desktop/Mobile shells, app catalog, lifecycle, SystemFS, Google/Drive, and production deployment | [OS README](https://github.com/Bl4ut0/PortfoliOS/blob/main/README.md), [browser adapter and release import](https://github.com/Bl4ut0/PortfoliOS/blob/main/docs/BROWSER_PROVIDERS.md) |
 | [Bl4ut0/PortfoliOS-Browser.JS](https://github.com/Bl4ut0/PortfoliOS-Browser.JS) | Browser UI, navigation/tabs, rewriting engine, browser-owned settings, and release artifacts | [Fork guide](README.md), [build](DEVELOPMENT.md), [host protocol](INTEGRATION.md) |
 
-| [Bl4ut0/PortfoliOS-Runtime](https://github.com/Bl4ut0/PortfoliOS-Runtime) (local scaffold; publication pending) | WASM/CLI execution compatibility, process/session lifecycle, capability interfaces, and application recipes; OS retains profile, storage, sync, and UI ownership | [Runtime design](https://github.com/Bl4ut0/PortfoliOS-Runtime/blob/main/docs/ARCHITECTURE.md), [implementation roadmap](https://github.com/Bl4ut0/PortfoliOS-Runtime/blob/main/docs/ROADMAP.md) |
-
 Use repository-relative links within a repository and full GitHub URLs across repositories. Use commit or tag URLs for release provenance and historical evidence; use the default branch for current guides. Do not publish drive letters, user-home paths, absolute checkout locations, or file URLs as project references.
 
 ## Create a portable workspace
@@ -29,7 +27,6 @@ workspace/
   PortfoliOS.code-workspace
   PortfoliOS/
   PortfoliOS-Browser.JS/
-  PortfoliOS-Runtime/          # optional local scaffold; publication pending
 ```
 
 The parent directory and checkout names can differ. The workspace generator discovers the OS among sibling Git roots using the origin repository URL from [module.json](module.json), accepting HTTPS and SSH remotes. It does not infer repository identity from a folder name or an npm package name. Keep exactly one sibling checkout of the OS repository.
@@ -63,9 +60,3 @@ Editable browser source belongs in [PortfoliOS-Browser.JS](https://github.com/Bl
 Select an upstream project and check its license/build requirements before creating a separate fork. Preserve its history and notices, record its canonical Git repository URL and upstream revision, and provide repository-hosted build, integration, and release documentation.
 
 Keep the lightweight app adapter and catalog entry in [PortfoliOS](https://github.com/Bl4ut0/PortfoliOS). Keep shared OS authentication and file APIs there. Define the app repository's own artifact and verification process, then add its relative checkout entry to the editor workspace. Cross-project documentation must link back to the Git repository, independent of where a contributor clones it.
-
-## Shared runtime planning
-
-The Runtime project is a separate sibling Git repository, currently scaffolded locally. Its GitHub URLs above identify the intended repository; do not assume a published clone or release exists yet. Add its relative folder entry to the editor workspace; this generator preserves additional entries.
-
-Preserve the typed selector -> selected Desktop/Mobile login -> profile storage activation -> selected shell mount flow. Load application execution engines on launch. The OS supplies captured profile/project capabilities; the Runtime owns execution compatibility and teardown. Provider subscription auth remains distinct from OS profile selection. Browser proxy transport is not automatically a CLI networking service. Runtime integration and credential persistence require their own validated contracts.
