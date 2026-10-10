@@ -6,6 +6,10 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 import { jsxPlugin } from "dreamland/vite";
 
 export default defineConfig({
+	base: "/apps/browser/browserjs/",
+	envDir: false,
+	publicDir: false,
+
 	plugins: [
 		process.env.VITE_SINGLEFILE ? viteSingleFile() : null,
 		// cssHmrPlugin(),
@@ -30,6 +34,13 @@ export default defineConfig({
 		// }),
 	],
 	define: {
+		"import.meta.env.VITE_PUTER_BRANDING": false,
+		__PORTFOLIOS_SOURCE_URL__: JSON.stringify(
+			process.env.PORTFOLIOS_SOURCE_URL ||
+				"https://github.com/Bl4ut0/PortfoliOS-Browser.JS"
+		),
+		"import.meta.env.VITE_ISOLATION_ORIGIN":
+			JSON.stringify("https://puter.zone"),
 		__COPYRIGHT_YEAR__: JSON.stringify(new Date().getFullYear()),
 		__DEFAULT_SETTINGS__: {
 			tabLayout: "horizontal",
@@ -64,6 +75,8 @@ export default defineConfig({
 		keepNames: true,
 	},
 	build: {
-		sourcemap: true,
+		sourcemap: false,
+		outDir: "dist",
+		emptyOutDir: false,
 	},
 });

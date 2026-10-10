@@ -138,7 +138,12 @@ export function NewTabPage(
 	return (
 		<div>
 			<div class="logo">
-				<img src="/icon.png" alt="Browser.js Logo" width="56" height="56" />
+				<img
+					src="/apps/browser/browserjs/icon.png"
+					alt="Browser.js Logo"
+					width="56"
+					height="56"
+				/>
 				<h1>Browser</h1>
 			</div>
 			<div class="topbar">

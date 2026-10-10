@@ -114,7 +114,13 @@ function smartParse<T = any>(json: string): T {
 }
 
 export class KVWrapper {
-	prefix = "bjs-";
+	prefix =
+		"bjs-" +
+		(new URL(location.href).searchParams.get("workspace") || "public").replace(
+			/[^a-z0-9_-]/gi,
+			""
+		) +
+		"-";
 	constructor(private type: KVType) {}
 
 	async rawget(key: string): Promise<string | null> {

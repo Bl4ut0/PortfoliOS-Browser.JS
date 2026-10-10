@@ -1,5 +1,16 @@
 # PortfoliOS fork changes
 
+## 2026-10-10 - Native proxy settings and OS release build
+
+- Moved the in-progress browser source modifications from the OS into this independent fork.
+- Added Settings → Proxy with automatic/custom secure Wisp configuration, per-workspace opt-in persistence, status, and closable OS connection options.
+- Adapted Settings and touch defaults for phones and scoped browser UI storage by workspace identifier.
+- Added a validated parent bridge without exchanging Google credentials or SystemFS access.
+- Kept rewritten content and its workers on external isolation origins; fixed delayed transport setup and relay changes for existing contexts.
+- Added pinned precompiled engine/injection inputs, a standalone frontend build, temporary Windows Dreamland build compatibility, fingerprinted assets, release checksums, and exact-revision source links.
+- Updated icons to the OS mount path and disabled upstream branding/authentication and telemetry for the production profile.
+- Runtime changes are in packages/chrome/src/pages/{ProxySettings,SettingsPage,NewTabPage}.tsx, portfolios.ts, consts.ts, index.ts, proxy/{Controller,scramjet,wisp}.ts, services/{KVWrapper,SettingsService}.ts, Tab/Tab.tsx, assets/favicon.ts, and vite.config.ts.
+
 ## 2026-10-10 - Repository and workspace setup
 
 - Forked HeyPuter/browser.js at 4bc4f86b226027f25cdce076c7124d1e0e6b36a3 into Bl4ut0/PortfoliOS-Browser.JS, preserving upstream Git history and license notices.

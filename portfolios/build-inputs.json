@@ -1,0 +1,13 @@
+{
+	"repository": "https://github.com/HeyPuter/browser.js",
+	"commit": "4bc4f86b226027f25cdce076c7124d1e0e6b36a3",
+	"dreamlandCommit": "44f8a9033a1244606ae3d4eb9400386c3c3b3cda",
+	"scramjet": {
+		"version": "2.0.67-alpha.2",
+		"integrity": "sha512-E/vmwQTqIoYmPLDb76t8Nv7O9kUdv8C6mRejdsT8APk5vBUYyIMI6CO0gyUVRX77Fc/NyoopfZNSaJ4qufJEww=="
+	},
+	"inject": {
+		"url": "https://browser.puter.com/assets/inject-BdIepyW2.js",
+		"sha256": "dc0f827a58687f3abce884b6426474e73e83868643fef3fdb8c6e5fed4a782a9"
+	}
+}

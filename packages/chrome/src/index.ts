@@ -7,7 +7,7 @@ import "./style.css";
 // temp fix for vite not working
 import.meta.hot?.accept(() => location.reload());
 
-import { setWispUrl } from "./proxy/wisp.ts";
+import { initializeConnection } from "./portfolios";
 
 import { ProfileService } from "./services/ProfileService.ts";
 import { SettingsService } from "./services/SettingsService.ts";
@@ -31,24 +31,7 @@ export let tabsService: TabsService;
 export let downloadsService: DownloadsService;
 export let faviconService: FaviconService;
 
-if (import.meta.env.VITE_PUTER_BRANDING) {
-	if (needSignIn && !puter.auth.isSignedIn()) {
-		await puter.auth.signIn();
-	}
-
-	if (needSignIn) {
-		const wisp = await puter.net.generateWispV1URL();
-		setWispUrl(wisp);
-	} else {
-		setWispUrl(
-			await fetch("https://sensible-ship-8305.puter.work/").then((r) =>
-				r.text()
-			)
-		);
-	}
-} else {
-	setWispUrl(import.meta.env.VITE_WISP_URL);
-}
+await initializeConnection();
 
 const loc = new URL(location.href);
 export const anonPeerToken = loc.searchParams.get("peerToken");

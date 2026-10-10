@@ -1,3 +1,4 @@
+import { waitForConnection } from "../portfolios";
 import { basePrefix, isIsolated } from ".";
 import type {
 	Controllerbound,
@@ -272,6 +273,7 @@ async function registerLocalControllerSW(): Promise<ServiceWorkerRegistration> {
 }
 
 export async function controllerForURL(url: URL): Promise<Controller> {
+	await waitForConnection();
 	let controller;
 	if (isIsolated) {
 		let existing = controllers.find((c) => {

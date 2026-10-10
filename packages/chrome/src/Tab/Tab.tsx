@@ -1,3 +1,4 @@
+import { connection } from "../portfolios";
 import { StatefulClass } from "../util/StatefulClass";
 import { History, type SerializedHistory } from "./History";
 import { INTERNAL_URL_PROTOCOL } from "../consts";
@@ -147,11 +148,11 @@ export class Tab extends StatefulClass {
 		// Internal pages never send a frame load acknowledgement.
 		this.history.justTriggeredNavigation =
 			url.protocol !== INTERNAL_URL_PROTOCOL;
-		this.icon = "/defaultfavicon.png";
+		this.icon = "/apps/browser/browserjs/defaultfavicon.png";
 		if (url.protocol == INTERNAL_URL_PROTOCOL) {
 			this.frame.clear();
 			this.icon = null;
-			this.history.current().favicon = "/icon.png";
+			this.history.current().favicon = "/apps/browser/browserjs/icon.png";
 			switch (url.host) {
 				case "newtab":
 					this.history.current().title = this.title = "New Tab";
@@ -192,7 +193,18 @@ export class Tab extends StatefulClass {
 			// if (!navigator.serviceWorker.controller) {
 			// 	serviceWorkerReady.then(() => {
 			console.warn("navigating to", url);
-			this.frame.go(url);
+			void this.frame.go(url).catch((error) => {
+				if (this.disposed || this.url.href !== url.href) return;
+				connection.status =
+					error instanceof Error
+						? error.message
+						: "The browser could not connect. Choose a proxy connection.";
+				this.history.justTriggeredNavigation = false;
+				this.justCreated = false;
+				this.initResolve();
+				this.title = "Connection unavailable";
+				this.internalpage = <SettingsPage tab={this} selected="proxy" />;
+			});
 			// 	});
 			// } else {
 			// this.frame.go(url);

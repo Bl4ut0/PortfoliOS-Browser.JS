@@ -1,3 +1,4 @@
+import { ProxySettings } from "./ProxySettings";
 import { css, type FC } from "dreamland/core";
 import type { Tab } from "../Tab/Tab";
 import { versionInfo } from "@mercuryworkshop/scramjet/bundled";
@@ -845,6 +846,7 @@ export function SettingsPage(
 					{button("themes", iconBrush, "Themes")}
 					{button("search", iconSearch, "Search")}
 					{button("privacy", iconPrivacy, "Privacy & Security")}
+					{button("proxy", iconOptions, "Proxy")}
 					{/* {button("extensions", iconExtension, "Extensions")} */}
 					{button("about", iconAbout, "About")}
 				</nav>
@@ -873,6 +875,16 @@ export function SettingsPage(
 								: s.charAt(0).toUpperCase() + s.slice(1)
 						)}
 					</h1>
+					{use(this.selected, this.searchQuery)
+						.map(
+							([selected, query]) =>
+								selected === "proxy" || Boolean(query.trim())
+						)
+						.and(
+							<div class="settings-tab">
+								<ProxySettings />
+							</div>
+						)}
 					{use(this.searchQuery, this.matches).map(([query, count]) =>
 						query.trim() && !count ? (
 							<p role="status">No settings found.</p>
@@ -1440,7 +1452,7 @@ export function SettingsPage(
 										<div class="about-info">
 											<img
 												class="browser-logo"
-												src="/icon.png"
+												src="/apps/browser/browserjs/icon.png"
 												alt={`${PRODUCT_FULLNAME} Logo`}
 											/>
 											<div class="browser-info">
@@ -2053,5 +2065,65 @@ SettingsPage.style = css`
 		font-size: 0.8rem;
 		color: var(--field-text-60);
 		line-height: 1.3;
+	}
+
+	/* PortfoliOS: keep search separate from scrolling settings and adapt to a phone. */
+	.content {
+		min-width: 0;
+		min-height: 0;
+	}
+	.settings-content {
+		min-height: 0;
+	}
+	.search-container {
+		z-index: auto;
+		background: var(--ntp_background);
+	}
+	.search-container {
+		position: static;
+		align-self: flex-end;
+		width: 24rem;
+		max-width: 100%;
+		flex-shrink: 0;
+		padding: 1rem 1.5rem 0.75rem;
+	}
+	@media (max-width: 650px) {
+		:scope {
+			flex-direction: column;
+		}
+		.sidebar {
+			width: auto;
+			padding: 0.5rem;
+			flex-shrink: 0;
+			overflow: visible;
+			border-right: 0;
+			border-bottom: 1px solid var(--text-15);
+		}
+		.sidebar > h1 {
+			display: none;
+		}
+		.navigation {
+			flex-direction: row;
+			overflow-x: auto;
+			gap: 0.25rem;
+		}
+		.nav-button {
+			width: auto;
+			flex-shrink: 0;
+			min-height: 44px;
+			padding: 0.6rem 0.75rem;
+			gap: 0.4rem;
+		}
+		.search-container {
+			width: 100%;
+			padding: 0.75rem 1rem;
+		}
+		.settings-content {
+			padding: 1rem;
+		}
+		.settings-tab {
+			max-width: 100%;
+			overflow-wrap: anywhere;
+		}
 	}
 `;

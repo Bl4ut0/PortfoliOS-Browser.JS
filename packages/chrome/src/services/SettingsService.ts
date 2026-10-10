@@ -66,6 +66,8 @@ export class SettingsService extends Service {
 	constructor(data: SettingsServiceState | null) {
 		super();
 		this.settings = createState({ ...__DEFAULT_SETTINGS__, ...data?.settings });
+		if (!data && new URL(location.href).searchParams.get("mobile") === "1")
+			Object.assign(this.settings, { uiProfile: "touch", tabLayout: "bottom" });
 		let oldvalues: Map<any, any> = new Map();
 		stateListen(this.settings, (newvalue, prop) => {
 			if (oldvalues.get(prop) === newvalue) return;

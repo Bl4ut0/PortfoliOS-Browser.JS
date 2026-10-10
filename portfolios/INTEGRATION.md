@@ -1,32 +1,41 @@
-# OS integration plan
+# PortfoliOS browser integration
 
-Status: source fork and workspace setup. No new browser protocol, deployment, or OS provider switch is implemented by this initial commit.
+The fork supplies the trusted Browser.js interface and rewriting runtime. PortfoliOS imports its checked build and loads it only when Browser opens. Desktop and Mobile share the OS host adapter.
 
-## Boundaries
+## Runtime boundary
 
-| Owner                   | Contents                                                                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| OS repository           | App registration, desktop/mobile host, lazy loader, window lifecycle, current user profile, SystemFS, cloud authorization and backup |
-| Browser fork            | Tabs, address bar, history/bookmarks, rendering/rewriting, browser settings, build pipeline                                          |
-| Separate content origin | Rewritten destination documents and the upstream isolation controller                                                                |
-| External relay operator | Website HTTP/TLS/WebSocket egress; capacity, access terms, quotas and traffic policy                                                 |
+- The trusted interface loads through `/apps/browser/browserjs.php` in a credentialless, sandboxed iframe. This maintained code has the same origin as PortfoliOS and must be reviewed with that trust in mind; credentialless storage does not prevent same-origin DOM access.
+- Rewritten websites and their service workers remain on external `*.puter.zone` origins. No proxy service worker is installed under the OS origin.
+- The OS parent retains COOP/COEP isolation. Only the trusted browser document opts out of COEP.
+- Website traffic uses the external upstream Wisp discovery service by default, or a user-selected secure Wisp endpoint. The OS server serves static browser assets and does not relay destination traffic. External service availability is outside this fork.
+- Credentialless storage belongs to the top-level document and child origin. PortfoliOS retains its provider ownership/reload guard when changing workspace accounts. Browser UI storage keys also include the workspace identifier.
 
-The production design loads browser code only when the Browser app opens. OS boot and login must not import the engine or start relay connections. Serve browser assets on an isolated origin rather than installing its service worker under the privileged OS origin. Serve rewritten content on its own isolation origin. Keep browser asset hosting and destination traffic relay independent.
+## Host protocol, version 1
 
-## Planned host interface
+Messages use explicit same-origin target origins. The parent accepts only the active browser frame; the browser accepts only its parent. Request IDs pair requests and responses.
 
-Implement and version a narrow message interface only when integrating the fork. Validate the sender's origin, source window, message shape, and allowed action; never send unrestricted commands or use a wildcard target origin. Useful initial actions are ready, open URL, focus, theme/UI mode, download request, and disposal. These are proposed capabilities, not currently supported messages. Upstream currently reads openUrl from the page URL; that is not a complete authenticated host bridge or profile boundary.
+| Direction    | Source                    | Type        | Payload                                     |
+| ------------ | ------------------------- | ----------- | ------------------------------------------- |
+| Browser → OS | `portfolios-browser`      | `ready`     | requestId                                   |
+| Browser → OS | `portfolios-browser`      | `configure` | requestId, config: mode, endpoint, remember |
+| Browser → OS | `portfolios-browser`      | `options`   | requestId                                   |
+| OS → Browser | `portfolios-browser-host` | response    | requestId, config, optional error           |
 
-Do not send OS Google tokens, Drive credentials, profile emails, SystemFS handles, or private files into a browsing frame. File import/export must follow an explicit OS-owned user action and controlled transfer. Browser UI defaults and bookmarks can later use a reviewed adapter; cookies, passwords, and session tokens must not silently enter Drive backup. Apps never own Google authentication or call Drive sync directly.
+The URL supplies `workspace` (opaque profile identifier), `mobile=1` (touch defaults), and optional `openUrl`. It never supplies Google credentials, profile email, Drive tokens, SystemFS access, or private files.
 
-Credentialless storage is partitioned by the top-level document and embedded origin, not by individual iframe. A stable origin must not silently share browsing state across OS profiles. Until a verified stronger isolation strategy exists, retain the OS partition ownership/reload gate. A new Browser.js internal profile alone does not prove separation of cookies, service-worker caches, or destination storage. Closing the iframe alone does not prove those have been erased.
+Settings → Proxy owns relay configuration. Custom endpoints require `wss:` and reject credentials, query parameters, and fragments. Only an explicitly remembered endpoint enters OS profile preferences and Drive backup. Upstream discovered access URLs remain in memory. Browser cookies/history are temporary credentialless browser state and are not backed up.
 
-## Delivery sequence
+The native settings page can open OS connection options for Scramjet, external proxy sites, or optional Hyperbeam. Back to browser and Escape close those options while retaining the existing browser frame. Choosing a different provider explicitly replaces it. Hyperbeam keeps the OS's existing quota, authorization, and lifecycle limits.
 
-1. **Repository setup (this change):** independent fork, preserved history/license/submodules, provenance, workspace tooling and documentation.
-2. **PortfoliOS build profile:** fork identity/source link, no upstream telemetry by default, explicit external relay selection, UI-only development launcher, documented multi-origin static hosting. Rebuild the WASM engine and record release provenance.
-3. **Browser host adapter:** implement the narrow interface and align desktop/mobile layout, theme, keyboard/touch controls, navigation, downloads, errors, and close/reopen. Keep expensive work outside boot/login. Review any in-progress OS vendored changes before porting them here.
-4. **Profile/storage validation:** verify public reset, private-to-public switching, partition ownership, local browser data handling, and explicit file export. Demonstrate with two different workspace accounts.
-5. **Pinned production integration:** publish reviewed assets and corresponding source, configure the OS to that immutable release, run OS/browser checks, deploy assets before HTML, verify real destinations on desktop/mobile, and retain rollback. Use the OS repository's deployment policy for that runtime change.
+## Release delivery
 
-A free public relay is not an entitlement or an uptime guarantee. Provider availability and use terms need verification before a release. ProxySite/hide.me are external proxy websites, not interchangeable Wisp endpoints. Hyperbeam remains an independently configured remote-browser provider with its existing quota controls.
+Run the build in this fork and commit its source changes. Build again from that clean commit so `release.json` and the UI's source links identify the corresponding revision. In PortfoliOS:
+
+```sh
+node scripts/import-browserjs.mjs /path/to/PortfoliOS-Browser.JS
+npm test
+node scripts/check-browserjs-browser.js
+node scripts/check-browser-providers.js
+```
+
+The importer checks checkout identity, a clean working tree, required files, safe paths, and every SHA-256 checksum. PortfoliOS commits the release receipt and generated assets, bumps its cache version, deploys assets before entry points, and verifies the live build. This fork has no independent production hosting command. Roll back by importing a previously validated fork revision and deploying it with a fresh OS release version.

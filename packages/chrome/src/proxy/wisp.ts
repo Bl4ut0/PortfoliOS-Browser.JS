@@ -31,6 +31,10 @@ export async function setWispUrl(wispurl: string) {
 	if (useEpoxy) {
 		await init();
 		const custom = new JsSocketProvider(async (host, port) => {
+			if (!import.meta.env.VITE_PUTER_BRANDING)
+				throw new Error(
+					"Puter peer connections are unavailable in this browser."
+				);
 			const socket = await puter.peer.connect(undefined, {
 				port,
 				anonToken: anonPeerToken,

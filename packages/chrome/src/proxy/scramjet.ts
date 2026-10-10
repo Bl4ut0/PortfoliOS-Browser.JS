@@ -49,6 +49,7 @@ import type {
 	FrameSequence,
 } from "../../../inject/src/types";
 import { bare, transport, wispUrl } from "./wisp";
+import { waitForConnection } from "../portfolios";
 import { codecDecode, codecEncode } from "./codec";
 import { Controller, controllerForURL, makeId } from "./Controller";
 import type { Tab } from "../Tab/Tab";
@@ -599,6 +600,9 @@ export async function handlefetch(
 		}
 	}
 
+	await waitForConnection();
+	// Existing handlers must use the latest relay without replacing their cache or tab state.
+	controller.fetchHandler.client = bare;
 	const fetchresponse = await controller.fetchHandler.handleFetch(data);
 
 	if (

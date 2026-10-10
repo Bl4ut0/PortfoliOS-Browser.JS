@@ -6,4 +6,5 @@ export const COMPANY_FULLNAME = "Puter Technologies";
 export const COMPANY_SHORTNAME = "Puter";
 export const PRODUCT_FULLNAME = "Browser.js";
 export const PRODUCT_SHORTNAME = "Browser.js";
-export const SOURCE_LOCATION = "https://github.com/HeyPuter/browser.js";
+declare const __PORTFOLIOS_SOURCE_URL__: string;
+export const SOURCE_LOCATION = __PORTFOLIOS_SOURCE_URL__;
