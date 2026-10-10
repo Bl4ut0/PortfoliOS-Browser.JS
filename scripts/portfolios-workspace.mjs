@@ -1,4 +1,10 @@
-import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	readdirSync,
+	readFileSync,
+	realpathSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -12,10 +18,34 @@ const forkRoot = realpathSync(fileURLToPath(new URL("..", import.meta.url)));
 const workspaceRoot = dirname(forkRoot);
 const workspaceFile = join(workspaceRoot, "PortfoliOS.code-workspace");
 const generatorId = "PortfoliOS-Browser.JS/workspace-v1";
-const osCandidates = [
-	join(workspaceRoot, "bl4ut0-portfolio-os"),
-	join(dirname(workspaceRoot), "bl4ut0-portfolio-os"),
-];
+const moduleInfo = JSON.parse(
+	readFileSync(join(forkRoot, "portfolios/module.json"), "utf8")
+);
+const hostRepository = moduleInfo.host.repository;
+
+function repositoryKey(remote) {
+	try {
+		const url = new URL(
+			remote.trim().replace(/^git@github\.com:/i, "https://github.com/")
+		);
+		if (
+			url.hostname.toLowerCase() !== "github.com" ||
+			!["https:", "ssh:"].includes(url.protocol)
+		)
+			return null;
+		return (
+			url.hostname + url.pathname.replace(/\/+$/, "").replace(/\.git$/i, "")
+		).toLowerCase();
+	} catch {
+		return null;
+	}
+}
+
+const expectedOrigin = repositoryKey(hostRepository);
+if (!expectedOrigin) throw new Error("Invalid host repository in module.json.");
+const osCandidates = readdirSync(workspaceRoot, { withFileTypes: true })
+	.filter((entry) => entry.isDirectory() || entry.isSymbolicLink())
+	.map((entry) => join(workspaceRoot, entry.name));
 
 function isRepoRoot(directory) {
 	if (!existsSync(directory)) return false;
@@ -36,16 +66,22 @@ function isRepoRoot(directory) {
 if (!isRepoRoot(forkRoot))
 	throw new Error("Run from a complete Browser fork checkout.");
 const osFolders = osCandidates.filter((directory) => {
-	const packageFile = join(directory, "package.json");
-	return (
-		isRepoRoot(directory) &&
-		existsSync(packageFile) &&
-		JSON.parse(readFileSync(packageFile, "utf8")).name === "bl4ut0-portfolio-os"
+	if (!isRepoRoot(directory)) return false;
+	const origin = spawnSync(
+		"git",
+		["-C", directory, "remote", "get-url", "origin"],
+		{
+			encoding: "utf8",
+			windowsHide: true,
+		}
 	);
+	return origin.status === 0 && repositoryKey(origin.stdout) === expectedOrigin;
 });
 if (osFolders.length !== 1) {
 	throw new Error(
-		"Expected exactly one OS checkout beside the Browser fork or beside the parent workspace. Found " +
+		"Expected exactly one sibling checkout of " +
+			hostRepository +
+			". Found " +
 			osFolders.length +
 			". No files changed."
 	);

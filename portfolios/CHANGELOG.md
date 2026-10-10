@@ -1,5 +1,12 @@
 # PortfoliOS fork changes
 
+## 2026-10-10 - Portable documentation and workspace references
+
+- Made Git repository URLs the canonical cross-project references and kept intra-repository links relative.
+- Removed machine-specific checkout locations and outdated migration instructions; corrected the build metadata link.
+- Changed workspace discovery to use the OS origin URL from module metadata instead of checkout or npm package names.
+- Updated the sibling-checkout release import examples and removed the prescribed host checkout name.
+
 ## 2026-10-10 - Native proxy settings and OS release build
 
 - Moved the in-progress browser source modifications from the OS into this independent fork.

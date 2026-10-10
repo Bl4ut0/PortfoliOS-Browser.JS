@@ -4,13 +4,17 @@ This is the independently maintained PortfoliOS fork of [HeyPuter/browser.js](ht
 
 The fork preserves upstream history, licenses, and pinned submodules. It now owns native proxy settings, responsive Desktop/Mobile settings, the scoped OS host bridge, and a checked frontend build. PortfoliOS imports the build with its exact source revision and asset checksums; the OS repository owns deployment.
 
-- [Workspace layout and OS migration](WORKSPACE.md)
+- [Portable workspace layout and repository references](WORKSPACE.md)
 - [Build prerequisites and upstream updates](DEVELOPMENT.md)
 - [OS integration boundaries and delivery roadmap](INTEGRATION.md)
 - [Fork change log](CHANGELOG.md)
 - [Machine-readable module information](module.json)
 - [Upstream contribution instructions](../CONTRIBUTING.md)
 - [License](../LICENSE)
+
+## Documentation references
+
+Use relative links for files in this repository and full GitHub URLs for another repository. Use exact commit or tag links for release provenance. Clone locations, drive letters, user-home paths, and local file URLs are not documentation backreferences. See the [workspace guide](WORKSPACE.md) for portable setup.
 
 ## Ownership
 

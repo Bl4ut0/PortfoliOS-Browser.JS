@@ -1,6 +1,6 @@
 # PortfoliOS-Browser.JS fork
 
-PortfoliOS maintains this fork of [HeyPuter/browser.js](https://github.com/HeyPuter/browser.js) for its virtual desktop/mobile browser. See the [PortfoliOS fork guide](portfolios/README.md), [workspace migration](portfolios/WORKSPACE.md), and [dated changes](portfolios/CHANGELOG.md). This fork owns the browser UI, native proxy settings, host bridge, and build pipeline. PortfoliOS imports pinned builds and handles production deployment.
+PortfoliOS maintains this fork of [HeyPuter/browser.js](https://github.com/HeyPuter/browser.js) for its virtual desktop/mobile browser. See the [PortfoliOS fork guide](portfolios/README.md), [portable workspace guide](portfolios/WORKSPACE.md), and [dated changes](portfolios/CHANGELOG.md). This fork owns the browser UI, native proxy settings, host bridge, and build pipeline. PortfoliOS imports pinned builds and handles production deployment.
 
 The original upstream README follows. Its hosted demo and support links belong to the upstream project.
 
@@ -39,7 +39,7 @@ It can be used as:
 
 ## Getting Started
 
-See [CONTRIBUTING.md](/CONTRIBUTING.md) for build instructions
+See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions
 
 <br>
 

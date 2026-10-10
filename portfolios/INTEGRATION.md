@@ -29,13 +29,13 @@ The native settings page can open OS connection options for Scramjet, external p
 
 ## Release delivery
 
-Run the build in this fork and commit its source changes. Build again from that clean commit so `release.json` and the UI's source links identify the corresponding revision. In PortfoliOS:
+Run the build in this fork and commit its source changes. Build again from that clean commit so `release.json` and the UI's source links identify the corresponding revision. From the [PortfoliOS](https://github.com/Bl4ut0/PortfoliOS) repository root, using the sibling clone layout in the [workspace guide](WORKSPACE.md):
 
 ```sh
-node scripts/import-browserjs.mjs /path/to/PortfoliOS-Browser.JS
+node scripts/import-browserjs.mjs ../PortfoliOS-Browser.JS
 npm test
 node scripts/check-browserjs-browser.js
 node scripts/check-browser-providers.js
 ```
 
-The importer checks checkout identity, a clean working tree, required files, safe paths, and every SHA-256 checksum. PortfoliOS commits the release receipt and generated assets, bumps its cache version, deploys assets before entry points, and verifies the live build. This fork has no independent production hosting command. Roll back by importing a previously validated fork revision and deploying it with a fresh OS release version.
+The checkout argument is relative to the OS root; adapt it if you choose another folder name. The [importer](https://github.com/Bl4ut0/PortfoliOS/blob/main/scripts/import-browserjs.mjs) checks checkout identity, a clean working tree, required files, safe paths, and every SHA-256 checksum. PortfoliOS commits the release receipt and generated assets, bumps its cache version, deploys assets before entry points, and verifies the live build. This fork has no independent production hosting command. Roll back by importing a previously validated fork revision and deploying it with a fresh OS release version.

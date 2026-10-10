@@ -1,6 +1,6 @@
 # Build and maintain the PortfoliOS browser
 
-The upstream source baseline and pinned submodules are recorded in [moduleInfo.json](moduleInfo.json). Use Node.js 22+ and pnpm 10.12.1. The PortfoliOS frontend build does not require a local Rust installation.
+The upstream source baseline and pinned submodules are recorded in [module.json](module.json). Use Node.js 22+ and pnpm 10.12.1. Clone [Bl4ut0/PortfoliOS-Browser.JS](https://github.com/Bl4ut0/PortfoliOS-Browser.JS) into a directory of your choice and run these commands from its repository root. The PortfoliOS frontend build does not require a local Rust installation.
 
 ```sh
 git submodule update --init external/dreamlandjs
@@ -24,7 +24,7 @@ git diff --check
 node scripts/build-portfolios.mjs
 ```
 
-Import the artifact using PortfoliOS's `scripts/import-browserjs.mjs`. That script rejects a dirty source checkout and mismatched checksums. The OS repository owns Desktop/Mobile UI tests, public reset/private profile tests, provider lifecycle tests, production deployment, and live browsing checks.
+Import the artifact using [PortfoliOS's importer](https://github.com/Bl4ut0/PortfoliOS/blob/main/scripts/import-browserjs.mjs), following the [OS build/import guide](https://github.com/Bl4ut0/PortfoliOS/blob/main/docs/BROWSER_PROVIDERS.md#build-and-import-a-release). That script rejects a dirty source checkout and mismatched checksums. The OS repository owns Desktop/Mobile UI tests, public reset/private profile tests, provider lifecycle tests, production deployment, and live browsing checks.
 
 The upstream full Rust/WASM workflow remains in [CONTRIBUTING.md](../CONTRIBUTING.md) and `packages/scramjet/packages/core/rewriter/wasm/build.sh`. It requires the Rust nightly toolchain, Bash/GNU tools, wasm-bindgen, Binaryen, and wasm-snip. Initialize `external/playwright` only when developing automation paths that need it. Do not expose the upstream development relay on the PortfoliOS server.
 
