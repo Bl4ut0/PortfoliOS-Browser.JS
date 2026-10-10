@@ -16,6 +16,10 @@ The fork preserves upstream history, licenses, and pinned submodules. It now own
 
 Use relative links for files in this repository and full GitHub URLs for another repository. Use exact commit or tag links for release provenance. Clone locations, drive letters, user-home paths, and local file URLs are not documentation backreferences. See the [workspace guide](WORKSPACE.md) for portable setup.
 
+## Shared design and agent decisions
+
+Use [PortfoliOS-Orchestration](https://github.com/Bl4ut0/PortfoliOS-Orchestration), its [agent instructions](https://github.com/Bl4ut0/PortfoliOS-Orchestration/blob/main/AGENTS.md) and [core documentation](https://github.com/Bl4ut0/PortfoliOS-Orchestration/tree/main/docs/core) for common product and integration decisions. Browser build and host protocol details remain here.
+
 ## Ownership
 
 Keep browser engine/UI changes in this repository. Keep the OS launcher, app lifecycle, profile selection, Google authentication, SystemFS, and Drive sync in [PortfoliOS](https://github.com/Bl4ut0/PortfoliOS). Exchange reviewed release artifacts and a narrowly defined interface; avoid a second editable copy of the engine in the OS repository.

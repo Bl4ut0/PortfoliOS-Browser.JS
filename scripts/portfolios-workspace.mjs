@@ -127,7 +127,7 @@ if (args.includes("--write")) {
 			encoding: "utf8",
 			flag: existsSync(workspaceFile) ? "w" : "wx",
 		});
-		console.log("Workspace written. No repositories moved or changed.");
+		console.log("Workspace written. Child project checkouts were not moved or modified.");
 	} else {
 		console.log("Workspace is already current.");
 	}

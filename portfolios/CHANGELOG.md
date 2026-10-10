@@ -1,5 +1,11 @@
 # PortfoliOS fork changes
 
+## 2026-10-10 - Shared Orchestration documentation
+
+- Linked shared design, architecture, application and profile rules to PortfoliOS-Orchestration.
+- Added repository agent guidance and documented the parent Git repository with ignored independent checkouts.
+- Kept build, host protocol and runtime source ownership in this fork.
+
 ## 2026-10-10 - Portable documentation and workspace references
 
 - Made Git repository URLs the canonical cross-project references and kept intra-repository links relative.
