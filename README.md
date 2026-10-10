@@ -1,3 +1,11 @@
+# PortfoliOS-Browser.JS fork
+
+PortfoliOS maintains this fork of [HeyPuter/browser.js](https://github.com/HeyPuter/browser.js) for its virtual desktop/mobile browser. See the [PortfoliOS fork guide](portfolios/README.md), [workspace migration](portfolios/WORKSPACE.md), and [dated changes](portfolios/CHANGELOG.md). The initial setup preserves upstream runtime code and has no configured production deployment.
+
+The original upstream README follows. Its hosted demo and support links belong to the upstream project.
+
+---
+
 <h3 align="center"><img width="80" alt="Browser.js" src="./assets/icon-256.png"></h3>
 
 <h3 align="center">Highly Configurable Browser Environment for the Web</h3>

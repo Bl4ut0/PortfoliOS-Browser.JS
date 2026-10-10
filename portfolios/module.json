@@ -1,0 +1,53 @@
+{
+	"schemaVersion": 1,
+	"id": "browser",
+	"name": "PortfoliOS-Browser.JS",
+	"repository": "https://github.com/Bl4ut0/PortfoliOS-Browser.JS",
+	"license": "AGPL-3.0-only",
+	"status": "source-fork-setup",
+	"upstream": {
+		"repository": "https://github.com/HeyPuter/browser.js",
+		"revision": "4bc4f86b226027f25cdce076c7124d1e0e6b36a3",
+		"importedOn": "2026-10-10"
+	},
+	"submodules": [
+		{
+			"path": "external/dreamlandjs",
+			"repository": "https://github.com/MercuryWorkshop/dreamlandjs",
+			"revision": "44f8a9033a1244606ae3d4eb9400386c3c3b3cda",
+			"purpose": "frontend build"
+		},
+		{
+			"path": "external/playwright",
+			"repository": "https://github.com/HeyPuter/playwright",
+			"revision": "0f1589ec413932eb26511fd14b204ca5c30139b6",
+			"purpose": "optional automation development"
+		}
+	],
+	"build": {
+		"node": ">=22",
+		"packageManager": "pnpm@10.12.1",
+		"frontendArtifact": "packages/chrome/dist",
+		"isolationAssets": "packages/sandbox",
+		"instructions": "portfolios/DEVELOPMENT.md"
+	},
+	"host": {
+		"repository": "https://github.com/Bl4ut0/PortfoliOS",
+		"checkoutName": "bl4ut0-portfolio-os",
+		"appId": "browser",
+		"loadOn": "app-open",
+		"protocolStatus": "planned",
+		"integrationInstructions": "portfolios/INTEGRATION.md"
+	},
+	"deployment": {
+		"configured": false,
+		"release": null,
+		"browserOrigin": null,
+		"contentOrigin": null,
+		"relay": {
+			"operator": "external",
+			"endpoint": null,
+			"osServerEgressAllowed": false
+		}
+	}
+}
