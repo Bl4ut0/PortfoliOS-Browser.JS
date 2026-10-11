@@ -882,7 +882,7 @@ export function SettingsPage(
 						)
 						.and(
 							<div class="settings-tab">
-								<ProxySettings />
+								<ProxySettings tab={this.tab} />
 							</div>
 						)}
 					{use(this.searchQuery, this.matches).map(([query, count]) =>

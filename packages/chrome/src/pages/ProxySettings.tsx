@@ -5,8 +5,9 @@ import {
 	saveConnection,
 	openConnectionOptions,
 } from "../portfolios";
+import type { Tab } from "../Tab/Tab";
 export function ProxySettings(
-	this: FC<{}, { mode: string; endpoint: string; remember: boolean }>
+	this: FC<{ tab: Tab }, { mode: string; endpoint: string; remember: boolean }>
 ) {
 	this.mode = connection.mode;
 	this.endpoint = connection.endpoint;
@@ -72,6 +73,9 @@ export function ProxySettings(
 				</p>
 			</form>
 			<div class="alternatives">
+                <button type="button" hidden={this.tab.url.protocol === "puter:"} on:click={() => this.tab._directnavigate(this.tab.url)}>
+                    Retry website
+                </button>
 				<h3>Other connection options</h3>
 				<p class="description">
 					Choose an alternative browser, an external web proxy, or a remote

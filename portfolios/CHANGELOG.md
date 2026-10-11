@@ -1,5 +1,12 @@
 # PortfoliOS fork changes
 
+## 2026-10-10 - Browser connection recovery
+
+- Share isolation-controller startup between concurrent tabs and register readiness before navigation. Reuse controllers only after they are ready.
+- Bound external isolation and service-worker setup to 20 seconds; remove failed isolation frames and allow another attempt.
+- Add Retry website to the connection error/settings surface, preserving the attempted address and tab.
+- The upstream discovery authorization limit still requires an authorized Wisp relay or explicit Hosted Browser.js selection.
+
 ## 2026-10-10 - Shared Orchestration documentation
 
 - Linked shared design, architecture, application and profile rules to PortfoliOS-Orchestration.

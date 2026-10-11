@@ -272,59 +272,60 @@ async function registerLocalControllerSW(): Promise<ServiceWorkerRegistration> {
 	return swRegistrationPromise;
 }
 
+// Share in-flight setup across tabs and bound third-party isolation startup.
+const controllerStarts = new Map<string, Promise<Controller>>();
+async function bounded<T>(promise: Promise<T>, message: string): Promise<T> {
+    let timer: ReturnType<typeof setTimeout>;
+    try {
+        return await Promise.race([promise, new Promise<T>((_, reject) => {
+            timer = setTimeout(() => reject(new Error(message)), 20000);
+        })]);
+    } finally { clearTimeout(timer!); }
+}
+
+async function createController(url: URL): Promise<Controller> {
+    if (isIsolated) {
+        const rootdomain = getRootDomain(url);
+        const existing = controllers.find(c => c.rootdomain === rootdomain);
+        if (existing) return existing;
+        const originurl = new URL(ISOLATION_ORIGIN);
+        const baseurl = new URL(`${originurl.protocol}//${hashDomain(rootdomain)}.${originurl.host}`);
+        const frame = document.createElement("iframe");
+        frame.style.display = "none";
+        // Register the readiness callback before starting the external document.
+        document.body.appendChild(frame);
+        const target = frame.contentWindow!;
+        const activation = new Promise<void>(resolve => controllerWaitPromises.set(target, () => resolve()));
+        frame.src = baseurl.href + "controller.html";
+        try {
+            await bounded(activation, "Website isolation did not start. Retry the website or open connection options.");
+            const controllerId = makeId();
+            const prefix = new URL(baseurl.origin + basePrefix + controllerId + "/");
+            const controller = new Controller(prefix, controllerId, target, rootdomain);
+            await bounded(controller.wait(), "Website isolation did not respond. Retry the website or open connection options.");
+            controllers.push(controller);
+            return controller;
+        } catch (error) {
+            frame.remove();
+            throw error;
+        } finally { controllerWaitPromises.delete(target); }
+    }
+    if (nonIsolatedController) return nonIsolatedController;
+    const registration = await bounded(registerLocalControllerSW(), "Browser storage did not start. Reload the browser and try again.");
+    const id = makeId();
+    const controller = new Controller(new URL(location.origin + basePrefix + id + "/"), id, registration.active!);
+    await bounded(controller.wait(), "Browser storage did not respond. Reload the browser and try again.");
+    nonIsolatedController = controller;
+    return controller;
+}
+
 export async function controllerForURL(url: URL): Promise<Controller> {
-	await waitForConnection();
-	let controller;
-	if (isIsolated) {
-		let existing = controllers.find((c) => {
-			return c.rootdomain === getRootDomain(url);
-		});
-		if (existing) return existing;
-
-		let originurl = new URL(ISOLATION_ORIGIN);
-		let baseurl = new URL(
-			`${originurl.protocol}//${hashDomain(getRootDomain(url))}.${originurl.host}`
-		);
-		let frame = document.createElement("iframe");
-		const rootdomain = getRootDomain(url);
-		frame.src = baseurl.href + "controller.html";
-		frame.style.display = "none";
-		document.body.appendChild(frame);
-		console.log("waiting for activation for " + rootdomain + " controller");
-
-		let controllerWaitResolve!: (v: unknown) => void;
-		let controllerWaitPromise = new Promise((res) => {
-			controllerWaitResolve = res;
-		});
-
-		controllerWaitPromises.set(frame.contentWindow!, controllerWaitResolve);
-		await controllerWaitPromise;
-		console.log("controller for " + rootdomain + " ready");
-
-		const controllerId = makeId();
-		let prefix = new URL(baseurl.origin + basePrefix + controllerId + "/");
-
-		controller = new Controller(
-			prefix,
-			controllerId,
-			frame.contentWindow!,
-			rootdomain
-		);
-		controllers.push(controller);
-	} else {
-		if (nonIsolatedController) {
-			return nonIsolatedController;
-		}
-
-		const registration = await registerLocalControllerSW();
-
-		let controllerId = makeId();
-		let prefix = new URL(location.origin + basePrefix + controllerId + "/");
-		controller = new Controller(prefix, controllerId, registration.active!);
-
-		nonIsolatedController = controller;
-	}
-
-	await controller.wait();
-	return controller;
+    await waitForConnection();
+    const key = isIsolated ? getRootDomain(url) : "local";
+    const pending = controllerStarts.get(key);
+    if (pending) return pending;
+    const attempt = createController(url);
+    controllerStarts.set(key, attempt);
+    try { return await attempt; }
+    finally { if (controllerStarts.get(key) === attempt) controllerStarts.delete(key); }
 }
