@@ -23,7 +23,7 @@ export function SiteInformationPopup(this: FC<{ tab: Tab }>) {
 	};
 
 	return (
-		<div>
+		<div class="SiteInformationPopup">
 			<div class="header section">
 				<span>
 					{use(this.tab.url).map((u) => splitUrl(u)[0] + splitUrl(u)[1])}

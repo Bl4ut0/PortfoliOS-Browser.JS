@@ -8,6 +8,9 @@ import { tabsService } from "../..";
 export function SiteOptionsButton() {
 	return (
 		<button
+			title="View site information"
+			aria-label="View site information"
+			class="site-options-btn"
 			on:click={(e: MouseEvent) => {
 				const target = e.currentTarget as HTMLElement;
 				const rect = target.getBoundingClientRect();
