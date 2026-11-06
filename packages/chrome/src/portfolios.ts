@@ -1,8 +1,13 @@
 /** PortfoliOS integration: same-origin parent handshake, scoped public settings only. */
 import { createState } from "dreamland/core";
-import { setWispUrl } from "./proxy/wisp";
+import {
+	setWispUrl,
+	setNativeRelay,
+	isNativeRelayAvailable,
+} from "./proxy/wisp";
+
 export const connection = createState({
-	mode: "automatic",
+	mode: "relay",
 	endpoint: "",
 	remember: false,
 	status: "",
@@ -74,6 +79,24 @@ async function connect(config: Configuration) {
 	const epoch = ++connectionEpoch;
 	connection.status = "Connecting…";
 	let endpoint = config.endpoint;
+
+	if (config.mode === "relay") {
+		const available = await isNativeRelayAvailable();
+		if (!available) {
+			connection.status =
+				"PortfoliOS Native Relay setup required. Extension or Host Bridge not detected.";
+			throw new Error(
+				"PortfoliOS Native Relay is not detected. Please install the companion extension and Host Bridge, or choose an alternate proxy."
+			);
+		}
+		if (epoch !== connectionEpoch) return;
+		await setNativeRelay();
+		if (epoch !== connectionEpoch) return;
+		connection.status =
+			"Connected via PortfoliOS Native Relay (Direct Host Bridge).";
+		return;
+	}
+
 	if (config.mode === "automatic") {
 		const response = await fetch("https://sensible-ship-8305.puter.work/", {
 			credentials: "omit",
@@ -97,8 +120,12 @@ async function connect(config: Configuration) {
 				"The automatic relay returned an invalid address. Choose a custom Wisp endpoint."
 			);
 	}
+
 	if (epoch !== connectionEpoch) return;
-	await setWispUrl(endpoint);
+	await setWispUrl(
+		endpoint,
+		config.mode === "automatic" ? "automatic" : "custom"
+	);
 	if (epoch !== connectionEpoch) return;
 	connection.status =
 		config.mode === "automatic"
@@ -107,14 +134,14 @@ async function connect(config: Configuration) {
 }
 export async function initializeConnection() {
 	let config: Configuration = {
-		mode: "automatic",
+		mode: "relay",
 		endpoint: "",
 		remember: false,
 	};
 	try {
 		config = await request("ready");
 	} catch {
-		/* standalone source preview uses the automatic relay */
+		/* standalone source preview uses the native relay by default */
 	}
 	Object.assign(connection, config);
 	// Keep Settings usable even when the relay is unreachable.

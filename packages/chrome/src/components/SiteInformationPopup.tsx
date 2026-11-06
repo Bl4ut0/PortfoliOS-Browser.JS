@@ -2,13 +2,26 @@ import { css, type FC } from "dreamland/core";
 import { type Tab } from "../Tab/Tab";
 import { splitUrl } from "../util";
 
-import { iconClose, iconTrash, iconSettings } from "../icons";
+import { iconClose } from "../icons";
 import { Icon } from "@components/Icon";
 import { Button } from "@components/Button";
 
 import { closeMenu } from "@components/Menu";
+import { connection } from "../portfolios";
 
 export function SiteInformationPopup(this: FC<{ tab: Tab }>) {
+	const getMessage = () => {
+		if (connection.mode === "relay") {
+			return connection.status.includes("Connected")
+				? "Connection is protected by SSL for this site and routed through PortfoliOS Native Relay"
+				: "PortfoliOS Native Relay setup required. Install the companion extension and Host Bridge.";
+		}
+		if (connection.mode === "custom") {
+			return "Connection is protected by SSL for this site and forwarded over custom WISP relay";
+		}
+		return "Connection is protected by SSL for this site and forwarded over Browser.js relay";
+	};
+
 	return (
 		<div>
 			<div class="header section">
@@ -27,20 +40,8 @@ export function SiteInformationPopup(this: FC<{ tab: Tab }>) {
 				</div>
 			</div>
 			<div class="content section">
-				<p>
-					Connection is protected by SSL for this site and forwarded over WISP
-				</p>
+				<p>{getMessage()}</p>
 			</div>
-			{/*<div class="footer section">
-				 <div class="entry">
-					<Icon icon={iconTrash}></Icon>
-					<span>Clear Site Data</span>
-				</div>
-				<div class="entry">
-					<Icon icon={iconSettings}></Icon>
-					<span>Site Settings</span>
-				</div>
-			</div>*/}
 		</div>
 	);
 }
@@ -54,46 +55,18 @@ SiteInformationPopup.style = css`
 		color: var(--toolbar_text);
 	}
 
-	.buttoniconscontainer {
-		flex: 1;
+	.header {
 		display: flex;
-		align-items: top;
-		justify-content: end;
-		color: var(--toolbar_text);
+		align-items: center;
+		justify-content: space-between;
+
+		color: var(--toolbar_field_text);
 	}
 
 	.content {
-		padding-inline: var(--space-xl);
-		font-size: 0.85em;
-		line-height: 1.3;
-		padding-bottom: var(--space-lg);
-	}
-
-	.header {
-		padding: var(--space-xl);
-		display: flex;
-		border-bottom: 1px solid var(--popup_border);
-	}
-	.header span {
-		font-size: 1.15em;
-		font-weight: 500;
-	}
-
-	.footer {
-		border-top: 1px solid var(--popup_border);
 		display: flex;
 		flex-direction: column;
-	}
-
-	.entry {
-		padding: var(--space-xl);
-		padding-left: calc(var(--space-xl) - 4px);
-		cursor: pointer;
-		display: flex;
-		align-items: center;
 		gap: var(--space-md);
-	}
-	.entry:hover {
-		background: var(--toolbarbutton-hover-background);
+		line-height: 1.4;
 	}
 `;
