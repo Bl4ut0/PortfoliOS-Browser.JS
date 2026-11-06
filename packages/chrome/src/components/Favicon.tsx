@@ -68,7 +68,7 @@ export function Favicon(
 
 	return (
 		<img
-			src={use(this.url)}
+			src={use(this.url).map((u) => u || defaultFaviconUrl)}
 			on:error={onError}
 			width={use(this.size).map((s) =>
 				s === "small" ? 16 : s === "medium" ? 32 : 64

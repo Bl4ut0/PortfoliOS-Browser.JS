@@ -362,17 +362,16 @@ export function DragTab(
 			></div>
 			<div class="dragroot" style="position: unset;">
 				<div class={use(this.active).map((x) => (x ? "main active" : "main"))}>
-					{use(this.tab.icon)
-						.and(
+					{use(this.tab.icon).map((icon) => icon ? (
 							<div class="favicon">
 								<img
 									alt="Tab icon"
 									width="16"
 									height="16"
-									src={use(this.tab.icon)}
+									src={icon}
 								/>
 							</div>
-						)
+						) : null)
 						.or(
 							use(this.orientation)
 								.zip(use(this.tab.pinned))
@@ -687,9 +686,11 @@ export function VerticalPinTile(
 			}}
 		>
 			<div class="pin-favicon">
-				{use(this.tab.icon)
-					.and(<img alt="" width="16" height="16" src={use(this.tab.icon)} />)
-					.or(<Icon class="favicon-placeholder" icon={iconGlobe} />)}
+				{use(this.tab.icon).map((icon) => icon ? (
+					<img alt="" width="16" height="16" src={icon} />
+				) : (
+					<Icon class="favicon-placeholder" icon={iconGlobe} />
+				))}
 			</div>
 		</div>
 	);

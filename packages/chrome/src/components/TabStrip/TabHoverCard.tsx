@@ -22,9 +22,9 @@ export function TabHoverCard(
 							class="img"
 						></div>
 					) : (
-						use(tab.screenshot).and(
-							<img alt="Tab screenshot" src={tab.screenshot} class="img" />
-						)
+						use(tab.screenshot).map((screenshot) => screenshot ? (
+							<img alt="Tab screenshot" src={screenshot} class="img" />
+						) : null)
 					)}
 				</>
 			))}

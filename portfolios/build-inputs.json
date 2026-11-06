@@ -4,7 +4,9 @@
 	"dreamlandCommit": "44f8a9033a1244606ae3d4eb9400386c3c3b3cda",
 	"scramjet": {
 		"version": "2.0.67-alpha.2",
-		"integrity": "sha512-E/vmwQTqIoYmPLDb76t8Nv7O9kUdv8C6mRejdsT8APk5vBUYyIMI6CO0gyUVRX77Fc/NyoopfZNSaJ4qufJEww=="
+		"integrity": "sha512-E/vmwQTqIoYmPLDb76t8Nv7O9kUdv8C6mRejdsT8APk5vBUYyIMI6CO0gyUVRX77Fc/NyoopfZNSaJ4qufJEww==",
+		"wasmUrl": "https://browser.puter.com/assets/scramjet-t-PAjClD.wasm",
+		"wasmSha256": "0264d8e3764d55b564edae2f4c7ac8c1707fc2fe24e14baf101b561a960558f7"
 	},
 	"inject": {
 		"url": "https://browser.puter.com/assets/inject-BdIepyW2.js",

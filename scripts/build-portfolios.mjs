@@ -59,6 +59,27 @@ if (!fs.existsSync(path.join(engine, "dist/scramjet_bundled.mjs"))) {
 		"package/dist",
 	]);
 }
+if (provenance.scramjet.wasmUrl) {
+	const wasmTarget = path.join(engine, "dist/scramjet.wasm");
+	let currentSha = "";
+	if (fs.existsSync(wasmTarget)) {
+		currentSha = crypto
+			.createHash("sha256")
+			.update(fs.readFileSync(wasmTarget))
+			.digest("hex");
+	}
+	if (currentSha !== provenance.scramjet.wasmSha256) {
+		const resp = await fetch(provenance.scramjet.wasmUrl);
+		if (!resp.ok) throw new Error("Scramjet WASM download failed");
+		const wasmBytes = Buffer.from(await resp.arrayBuffer());
+		if (
+			crypto.createHash("sha256").update(wasmBytes).digest("hex") !==
+			provenance.scramjet.wasmSha256
+		)
+			throw new Error("Scramjet WASM integrity mismatch");
+		fs.writeFileSync(wasmTarget, wasmBytes);
+	}
+}
 const injection = path.join(source, "packages/inject/dist/inject.js");
 if (!fs.existsSync(injection)) {
 	const response = await fetch(provenance.inject.url);
@@ -112,12 +133,23 @@ const referenced = new Set(
 		),
 	].map((m) => m[1])
 );
+const entryJs = [...referenced].find((f) => f.endsWith(".js"));
+const referencedWasm = new Set();
+if (entryJs && fs.existsSync(path.join(output, "assets", entryJs))) {
+	const content = fs.readFileSync(path.join(output, "assets", entryJs), "utf8");
+	for (const match of content.matchAll(/scramjet-[a-zA-Z0-9_-]+\.wasm/g)) {
+		referencedWasm.add(match[0]);
+	}
+}
 // Remove only obsolete generated entry bundles, maps and unused upstream workers in the checked output.
 if (output !== path.join(root, "packages/chrome/dist"))
 	throw new Error("Unexpected output directory");
-for (const file of fs.readdirSync(path.join(output, "assets")))
+for (const file of fs.readdirSync(path.join(output, "assets"))) {
 	if (/^index-.*\.(js|css)(\.map)?$/.test(file) && !referenced.has(file))
 		fs.unlinkSync(path.join(output, "assets", file));
+	if (/^scramjet-.*\.wasm$/.test(file) && !referencedWasm.has(file))
+		fs.unlinkSync(path.join(output, "assets", file));
+}
 for (const file of ["sw.js", "controller.sw.js", "localcontrollersw.js"])
 	if (fs.existsSync(path.join(output, file)))
 		fs.unlinkSync(path.join(output, file));
